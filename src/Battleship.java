@@ -31,38 +31,30 @@ public class Battleship {
         int countDamagedShip1 = 0;
         int countDamagedShip2 = 0;
 
-        while(countDamagedShip2 < MAX_SHIPS_ARMADA && countDamagedShip1 < MAX_SHIPS_ARMADA) {
+        boolean currentMovePlayer1 = true;
 
-            System.out.println("Введите координаты для атаки игрок_1 - x,y");
+        while(countDamagedShip2 < MAX_SHIPS_ARMADA && countDamagedShip1 < MAX_SHIPS_ARMADA) {
+            int number = currentMovePlayer1 ? 1 : 2;
+            String[][] mapToCheck = currentMovePlayer1 ? player2 : player1;
+
+            System.out.println("Введите координаты для атаки игрок_" + number  + "- x,y");
             String line = sc.nextLine(); //x,y;
 
             int x = parseX(line);
             int y = parseY(line);
 
-
-            if (player2[x][y].equals("\uD83D\uDEA2")) {
+            if (mapToCheck[x][y].equals("\uD83D\uDEA2")) {
                 System.out.println("Вы попали в корабль");
-                player2[x][y] = "\uD83D\uDFE5";
+                mapToCheck[x][y] = "\uD83D\uDFE5";
 
-                countDamagedShip2++;
+                if (currentMovePlayer1) {
+                    countDamagedShip2++;
+                } else  {
+                    countDamagedShip1++;
+                }
 
             } else {
-                System.out.println("Вы промахнулись");
-            }
-
-            System.out.println("Введите координаты для атаки игрок_2 - x,y");
-            line = sc.nextLine(); //x,y;
-
-            x = parseX(line);
-            y = parseY(line);
-
-            if (player1[x][y].equals("\uD83D\uDEA2")) {
-                System.out.println("Вы попали в корабль");
-                player1[x][y] = "\uD83D\uDFE5";
-
-                countDamagedShip1++;
-
-            } else {
+                currentMovePlayer1 = currentMovePlayer1 ? false : true;
                 System.out.println("Вы промахнулись");
             }
 
