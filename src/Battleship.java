@@ -1,5 +1,6 @@
 import com.sun.org.apache.xpath.internal.objects.XNumber;
 
+import java.util.Random;
 import java.util.Scanner;
 
 public class Battleship {
@@ -37,7 +38,11 @@ public class Battleship {
         int countDamagedShip1 = 0;
         int countDamagedShip2 = 0;
 
-        boolean currentMovePlayer1 = true;
+        System.out.println();
+        System.out.println("Введите случайное число - для опредения вероятности: кто будет ходить первым");
+        int seed = Integer.parseInt(sc.nextLine());
+        final Random random = new Random(seed);
+        boolean currentMovePlayer1 = random.nextInt(2) == 1;
 
         while(countDamagedShip2 < MAX_SHIPS_ARMADA && countDamagedShip1 < MAX_SHIPS_ARMADA) {
             int number = currentMovePlayer1 ? 1 : 2;
@@ -73,6 +78,7 @@ public class Battleship {
             System.out.println("Победил второй игрок");
         }
 
+        sc.close();
 
     }
 
