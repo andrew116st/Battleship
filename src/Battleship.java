@@ -27,7 +27,7 @@ public class Battleship {
         System.out.println("Вы начали играть в игру - Морской бой");
 
         if(TEST){
-            fillDefaultMap(player1);
+            fillDefaultMap1(player1);
             fillDefaultMap2(player2);
          } else {
             shipTable(player1, 1);
@@ -43,6 +43,7 @@ public class Battleship {
             int number = currentMovePlayer1 ? 1 : 2;
             String[][] mapToCheck = currentMovePlayer1 ? player2 : player1;
 
+            System.out.println();
             System.out.println("Введите координаты для атаки игрок_" + number  + "- x,y");
             String line = sc.nextLine(); //x,y;
 
@@ -144,7 +145,7 @@ public class Battleship {
         System.out.println();
     }
 
-    public static void fillDefaultMap(String[][] map) {
+    public static void fillDefaultMap1(String[][] map) {
         map[0][1] = "\uD83D\uDEA2";
         map[0][2] = "\uD83D\uDEA2";
         map[0][3] = "\uD83D\uDEA2";
