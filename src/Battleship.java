@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public class Battleship {
     private static Scanner sc = new Scanner(System.in);
+    private static final int MAX_SHIPS_ARMADA = 20;
 
     public static void main(String[] args) {
 
@@ -27,7 +28,10 @@ public class Battleship {
         shipTable(player1, 1);
         shipTable(player2,2);
 
-        while(true) {
+        int countDamagedShip1 = 0;
+        int countDamagedShip2 = 0;
+
+        while(countDamagedShip2 < MAX_SHIPS_ARMADA && countDamagedShip1 < MAX_SHIPS_ARMADA) {
 
             System.out.println("Введите координаты для атаки игрок_1 - x,y");
             String line = sc.nextLine(); //x,y;
@@ -39,6 +43,8 @@ public class Battleship {
             if (player2[x][y].equals("\uD83D\uDEA2")) {
                 System.out.println("Вы попали в корабль");
                 player2[x][y] = "\uD83D\uDFE5";
+
+                countDamagedShip2++;
 
             } else {
                 System.out.println("Вы промахнулись");
@@ -54,11 +60,20 @@ public class Battleship {
                 System.out.println("Вы попали в корабль");
                 player1[x][y] = "\uD83D\uDFE5";
 
+                countDamagedShip1++;
+
             } else {
                 System.out.println("Вы промахнулись");
             }
 
         }
+
+        if (countDamagedShip2 == MAX_SHIPS_ARMADA){
+            System.out.println("Победил первый игрок");
+        } else if (countDamagedShip1 == MAX_SHIPS_ARMADA){
+            System.out.println("Победил второй игрок");
+        }
+
 
     }
 
