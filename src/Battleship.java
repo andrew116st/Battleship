@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class Battleship {
     private static Scanner sc = new Scanner(System.in);
     private static final int MAX_SHIPS_ARMADA = 20;
+    private static final boolean TEST = true;
 
     public static void main(String[] args) {
 
@@ -25,8 +26,13 @@ public class Battleship {
 
         System.out.println("Вы начали играть в игру - Морской бой");
 
-        shipTable(player1, 1);
-        shipTable(player2,2);
+        if(TEST){
+            fillDefaultMap1(player1);
+            fillDefaultMap2(player2);
+         } else {
+            shipTable(player1, 1);
+            shipTable(player2, 2);
+        }
 
         int countDamagedShip1 = 0;
         int countDamagedShip2 = 0;
@@ -37,6 +43,7 @@ public class Battleship {
             int number = currentMovePlayer1 ? 1 : 2;
             String[][] mapToCheck = currentMovePlayer1 ? player2 : player1;
 
+            System.out.println();
             System.out.println("Введите координаты для атаки игрок_" + number  + "- x,y");
             String line = sc.nextLine(); //x,y;
 
@@ -127,6 +134,7 @@ public class Battleship {
     }
 
 
+
     public static void printMap(String[][] map) {
         for (int i = 0; i < map.length; i++) {
             System.out.println();
@@ -137,5 +145,75 @@ public class Battleship {
         System.out.println();
     }
 
+    public static void fillDefaultMap1(String[][] map) {
+        map[0][1] = "\uD83D\uDEA2";
+        map[0][2] = "\uD83D\uDEA2";
+        map[0][3] = "\uD83D\uDEA2";
+        map[0][4] = "\uD83D\uDEA2";
+
+        map[1][2] = "\uD83D\uDEA2";
+        map[1][3] = "\uD83D\uDEA2";
+        map[1][4] = "\uD83D\uDEA2";
+
+        map[3][1] = "\uD83D\uDEA2";
+        map[3][2] = "\uD83D\uDEA2";
+        map[3][3] = "\uD83D\uDEA2";
+
+        map[4][4] = "\uD83D\uDEA2";
+        map[4][6] = "\uD83D\uDEA2";
+
+        map[5][1] = "\uD83D\uDEA2";
+        map[5][2] = "\uD83D\uDEA2";
+
+        map[6][4] = "\uD83D\uDEA2";
+        map[6][5] = "\uD83D\uDEA2";
+
+        map[8][1] = "\uD83D\uDEA2";
+
+        map[7][6] = "\uD83D\uDEA2";
+
+        map[9][1] = "\uD83D\uDEA2";
+
+        map[8][6] = "\uD83D\uDEA2";
+
+        printMap(map);
+    }
+
+   ///////////////////////////////////////
+   public static void fillDefaultMap2(String[][] map) {
+       map[9][1] = "\uD83D\uDEA2";
+       map[9][2] = "\uD83D\uDEA2";
+       map[9][3] = "\uD83D\uDEA2";
+       map[9][4] = "\uD83D\uDEA2";
+
+       map[1][6] = "\uD83D\uDEA2";
+       map[1][7] = "\uD83D\uDEA2";
+       map[1][8] = "\uD83D\uDEA2";
+
+       map[2][1] = "\uD83D\uDEA2";
+       map[2][2] = "\uD83D\uDEA2";
+       map[2][3] = "\uD83D\uDEA2";
+
+       map[7][5] = "\uD83D\uDEA2";
+       map[7][6] = "\uD83D\uDEA2";
+
+       map[3][1] = "\uD83D\uDEA2";
+       map[3][2] = "\uD83D\uDEA2";
+
+       map[4][6] = "\uD83D\uDEA2";
+       map[4][5] = "\uD83D\uDEA2";
+
+       map[5][5] = "\uD83D\uDEA2";
+
+       map[3][4] = "\uD83D\uDEA2";
+
+       map[7][1] = "\uD83D\uDEA2";
+
+       map[8][2] = "\uD83D\uDEA2";
+
+       printMap(map);
+
+
+    }
 
 }
