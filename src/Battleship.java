@@ -1,6 +1,10 @@
+import com.sun.org.apache.xpath.internal.objects.XNumber;
+
 import java.util.Scanner;
 
 public class Battleship {
+    private static Scanner sc = new Scanner(System.in);
+
     public static void main(String[] args) {
 
         String[][] player1 = new String[10][10];
@@ -18,95 +22,100 @@ public class Battleship {
             }
         }
 
-        Scanner sc = new Scanner(System.in);
         System.out.println("Вы начали играть в игру - Морской бой");
-        System.out.println("Необходимо раставить корабли - Игрок_1");
-        System.out.println("Введите координаты кораблей. формат: x,y;x,y;x,y;x,y "); // 1 штука
+
+        shipTable(player1, 1);
+        shipTable(player2,2);
+
+        while(true) {
+
+            System.out.println("Введите координаты для атаки игрок_1 - x,y");
+            String line = sc.nextLine(); //x,y;
+
+            int x = parseX(line);
+            int y = parseY(line);
+
+
+            if (player2[x][y].equals("\uD83D\uDEA2")) {
+                System.out.println("Вы попали в корабль");
+                player2[x][y] = "\uD83D\uDFE5";
+
+            } else {
+                System.out.println("Вы промахнулись");
+            }
+
+            System.out.println("Введите координаты для атаки игрок_2 - x,y");
+            line = sc.nextLine(); //x,y;
+
+            x = parseX(line);
+            y = parseY(line);
+
+            if (player1[x][y].equals("\uD83D\uDEA2")) {
+                System.out.println("Вы попали в корабль");
+                player1[x][y] = "\uD83D\uDFE5";
+
+            } else {
+                System.out.println("Вы промахнулись");
+            }
+
+        }
+
+    }
+
+    public static int parseX (String line) {
+
+        char temp1 = line.charAt(0);
+        String temp2 = String.valueOf(temp1);
+        return Integer.parseInt(temp2);
+
+    }
+
+    public static int parseY (String line) {
+
+        char temp1 = line.charAt(2);
+        String temp2 = String.valueOf(temp1);
+        return Integer.parseInt(temp2);
+
+    }
+
+    public static void positionShips(String[][] player, String format) {
+        System.out.println("Введите координаты кораблей. формат: " + format); // 1 штука
 
         String line = sc.nextLine(); //x,y;x,y;x,y;x,y
         String[] coords = line.split(";");
 
-
         for (int m = 0; m < coords.length; m++) {
             String coordFirst = coords[m];
-            int x, y;
-            char temp1 = coordFirst.charAt(0);
-            String temp2 = String.valueOf(temp1);
-            x = Integer.parseInt(temp2);
 
-            char temp3 = coordFirst.charAt(2);
-            String temp4 = String.valueOf(temp3);
-            y = Integer.parseInt(temp4);
+            int x = parseX(coordFirst);
+            int y = parseY(coordFirst);
 
-            player1[x][y] = "\uD83D\uDEA2";
+            player[x][y] = "\uD83D\uDEA2";
         }
+
+    }
+
+    public static void shipTable(String[][] player, int number){
+
+        System.out.println();
+        System.out.println("Необходимо раставить корабли - Игрок_" + number);
+
+        positionShips(player, "x,y;x,y;x,y;x,y");
+
         for (int i =0; i<2; i++) {
-
-            System.out.println("Введите координаты корабля. формат: x,y;x,y;x,y"); //2 штуки
-            line = sc.nextLine(); //x,y;x,y;x,y;
-            coords = line.split(";");
-
-            for (int m = 0; m < coords.length; m++) {
-                String coordFirst = coords[m];
-                int x, y;
-                char temp1 = coordFirst.charAt(0);
-                String temp2 = String.valueOf(temp1);
-                x = Integer.parseInt(temp2);
-
-                char temp3 = coordFirst.charAt(2);
-                String temp4 = String.valueOf(temp3);
-                y = Integer.parseInt(temp4);
-
-                player1[x][y] = "\uD83D\uDEA2";
-
-            }
+            positionShips(player, "x,y;x,y;x,y");
         }
 
-        for (int i =0; i<3; i++) {
-
-            System.out.println("Введите координаты корабля. формат: x,y;x,y"); //3 штуки
-            line = sc.nextLine(); //x,y;x,y
-            coords = line.split(";");
-
-            for (int m = 0; m < coords.length; m++) {
-                String coordFirst = coords[m];
-                int x, y;
-                char temp1 = coordFirst.charAt(0);
-                String temp2 = String.valueOf(temp1);
-                x = Integer.parseInt(temp2);
-
-                char temp3 = coordFirst.charAt(2);
-                String temp4 = String.valueOf(temp3);
-                y = Integer.parseInt(temp4);
-
-                player1[x][y] = "\uD83D\uDEA2";
-
-            }
+        for (int i = 0; i < 3; i++) {
+            positionShips(player, "x,y;x,y");
         }
 
-        for (int i =0; i<4; i++) {
-
-            System.out.println("Введите координаты корабля. формат: x,y"); //4 штуки
-            line = sc.nextLine(); //x,y;
-            coords = line.split(";");
-
-            for (int m = 0; m < coords.length; m++) {
-                String coordFirst = coords[m];
-                int x, y;
-                char temp1 = coordFirst.charAt(0);
-                String temp2 = String.valueOf(temp1);
-                x = Integer.parseInt(temp2);
-
-                char temp3 = coordFirst.charAt(2);
-                String temp4 = String.valueOf(temp3);
-                y = Integer.parseInt(temp4);
-
-                player1[x][y] = "\uD83D\uDEA2";
-
-            }
+        for (int i = 0; i < 4; i++) {
+            positionShips(player, "x,y");
         }
 
-        printMap(player1);
+        printMap(player);
+
 
     }
 
@@ -118,6 +127,7 @@ public class Battleship {
                 System.out.print(map[i][j] + " ");
             }
         }
+        System.out.println();
     }
 
 
