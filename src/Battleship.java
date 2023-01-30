@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class Battleship {
     private static Scanner sc = new Scanner(System.in);
     private static final int MAX_SHIPS_ARMADA = 20;
-    private static final boolean TEST = true;
+    private static final boolean TEST = false;
 
     public static void main(String[] args) {
 
@@ -39,7 +39,7 @@ public class Battleship {
         int countDamagedShip2 = 0;
 
         System.out.println();
-        System.out.println("Введите случайное число - для опредения вероятности: кто будет ходить первым");
+        System.out.println("Введите случайное число - для опредения вероятности: кто будет ходить первым - " + "$$$$_" + "\uD83E\uDD11" + "_$$$$");
         int seed = Integer.parseInt(sc.nextLine());
         final Random random = new Random(seed);
         boolean currentMovePlayer1 = random.nextInt(2) == 1;
@@ -48,12 +48,25 @@ public class Battleship {
             int number = currentMovePlayer1 ? 1 : 2;
             String[][] mapToCheck = currentMovePlayer1 ? player2 : player1;
 
-            System.out.println();
-            System.out.println("Введите координаты для атаки игрок_" + number  + "- x,y");
-            String line = sc.nextLine(); //x,y;
+            int x = 0;
+            int y = 0;
 
-            int x = parseX(line);
-            int y = parseY(line);
+            while (true) {
+
+                System.out.println();
+                System.out.println("Введите координаты для атаки игрок_" + number + " - x,y");
+                String line = sc.nextLine(); //x,y;
+
+                try {
+                    x = parseX(line);
+                    y = parseY(line);
+
+                    break;
+
+                } catch (NumberFormatException e){
+                    System.out.println("Введите координат повторно - Вы ошиблись при вводе");
+                }
+            }
 
             if (mapToCheck[x][y].equals("\uD83D\uDEA2")) {
                 System.out.println("Вы попали в корабль");
@@ -82,7 +95,7 @@ public class Battleship {
 
     }
 
-    public static int parseX (String line) {
+    public static int parseX (String line) throws NumberFormatException  {
 
         char temp1 = line.charAt(0);
         String temp2 = String.valueOf(temp1);
@@ -90,7 +103,7 @@ public class Battleship {
 
     }
 
-    public static int parseY (String line) {
+    public static int parseY (String line) throws NumberFormatException {
 
         char temp1 = line.charAt(2);
         String temp2 = String.valueOf(temp1);
@@ -99,9 +112,15 @@ public class Battleship {
     }
 
     public static void positionShips(String[][] player, String format) {
-        System.out.println("Введите координаты кораблей. формат: " + format); // 1 штука
+        String line = "";
+        while (true) {
+            System.out.println("Введите координаты кораблей. формат: " + format); // 1 штука
+            line = sc.nextLine(); //x,y;x,y;x,y;x,y
+            if (checkCoordinates(line)) {
+                break;
+            }
+        }
 
-        String line = sc.nextLine(); //x,y;x,y;x,y;x,y
         String[] coords = line.split(";");
 
         for (int m = 0; m < coords.length; m++) {
@@ -115,23 +134,39 @@ public class Battleship {
 
     }
 
+    private static boolean checkCoordinates(String line) {
+        String[] coords = line.split(";");
+
+        for (int m = 0; m < coords.length; m++) {
+            String coordFirst = coords[m];
+            try {
+                int x = parseX(coordFirst);
+                int y = parseY(coordFirst);
+            } catch (NumberFormatException e) {
+                System.out.println("ОШИБКА - при вводе координат корабля");
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static void shipTable(String[][] player, int number){
 
         System.out.println();
         System.out.println("Необходимо раставить корабли - Игрок_" + number);
 
-        positionShips(player, "x,y;x,y;x,y;x,y");
+        positionShips(player, "x,y;x,y;x,y;x,y " + " ■|■|■|■");
 
         for (int i =0; i<2; i++) {
-            positionShips(player, "x,y;x,y;x,y");
+            positionShips(player, "x,y;x,y;x,y " + " ■|■|■");
         }
 
         for (int i = 0; i < 3; i++) {
-            positionShips(player, "x,y;x,y");
+            positionShips(player, "x,y;x,y " + " ■|■");
         }
 
         for (int i = 0; i < 4; i++) {
-            positionShips(player, "x,y");
+            positionShips(player, "x,y " + " ■");
         }
 
         printMap(player);
