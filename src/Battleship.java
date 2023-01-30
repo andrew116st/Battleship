@@ -190,8 +190,9 @@ public class Battleship {
     private static boolean checkCoordinates(String line, String[][] map, int sizeShip) {
         boolean resultOk = true;
         resultOk = resultOk && controlOpportunityParsing(line);
-        resultOk = resultOk && checkCellShip(line, map);
         resultOk = resultOk && checkSizeShip(line, sizeShip);
+        resultOk = resultOk && checkCellShip(line, map);
+        
 
         return resultOk;
     }
