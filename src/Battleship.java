@@ -111,12 +111,14 @@ public class Battleship {
 
     }
 
-    public static void positionShips(String[][] player, String format) {
+    public static void positionShips(String[][] player, String format, int sizeShip) {
         String line = "";
         while (true) {
             System.out.println("Введите координаты кораблей. формат: " + format); // 1 штука
             line = sc.nextLine(); //x,y;x,y;x,y;x,y
-            if (checkCoordinates(line, player)) {
+
+
+            if (checkCoordinates(line, player, sizeShip)) {
                 break;
             }
         }
@@ -169,10 +171,28 @@ public class Battleship {
 
     }
 
-    private static boolean checkCoordinates(String line, String[][] map) {
+    public static boolean checkSizeShip (String line, int sizeShip){
+        String[] coords = line.split(";");
+
+        if (coords.length == sizeShip){
+            System.out.println("Вы ввели правильные координаты ! " + "❤❤"+"❤❤");
+            System.out.println();
+            return true;
+        }else{
+            System.out.println("ОШИБКА - Введите координаты заново! " + "✖✖✖✖");
+            System.out.println();
+          return false;
+        }
+
+    }
+
+
+    private static boolean checkCoordinates(String line, String[][] map, int sizeShip) {
         boolean resultOk = true;
         resultOk = resultOk && controlOpportunityParsing(line);
         resultOk = resultOk && checkCellShip(line, map);
+        resultOk = resultOk && checkSizeShip(line, sizeShip);
+
         return resultOk;
     }
 
@@ -181,18 +201,18 @@ public class Battleship {
         System.out.println();
         System.out.println("Необходимо раставить корабли - Игрок_" + number);
 
-        positionShips(player, "x,y;x,y;x,y;x,y " + " ■|■|■|■");
+        positionShips(player, "x,y;x,y;x,y;x,y " + " ■|■|■|■", 4);
 
-        for (int i =0; i<2; i++) {
-            positionShips(player, "x,y;x,y;x,y " + " ■|■|■");
+        for (int i = 0; i < 2; i++) {
+            positionShips(player, "x,y;x,y;x,y " + " ■|■|■",3);
         }
 
         for (int i = 0; i < 3; i++) {
-            positionShips(player, "x,y;x,y " + " ■|■");
+            positionShips(player, "x,y;x,y " + " ■|■",2);
         }
 
         for (int i = 0; i < 4; i++) {
-            positionShips(player, "x,y " + " ■");
+            positionShips(player, "x,y " + " ■", 1);
         }
 
         printMap(player);
