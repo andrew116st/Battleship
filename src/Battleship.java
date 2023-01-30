@@ -116,7 +116,7 @@ public class Battleship {
         while (true) {
             System.out.println("Введите координаты кораблей. формат: " + format); // 1 штука
             line = sc.nextLine(); //x,y;x,y;x,y;x,y
-            if (checkCoordinates(line)) {
+            if (checkCoordinates(line, player)) {
                 break;
             }
         }
@@ -134,7 +134,7 @@ public class Battleship {
 
     }
 
-    private static boolean checkCoordinates(String line) {
+    public static boolean controlOpportunityParsing(String line){
         String[] coords = line.split(";");
 
         for (int m = 0; m < coords.length; m++) {
@@ -148,6 +148,32 @@ public class Battleship {
             }
         }
         return true;
+    }
+
+    private static boolean checkCellShip (String line, String[][] map){
+
+        String[] coords = line.split(";");
+
+        for (int m = 0; m < coords.length; m++) {
+            String coordFirst = coords[m];
+
+            int x = parseX(coordFirst);
+            int y = parseY(coordFirst);
+
+            if (map[x][y].equals("\uD83D\uDEA2")){
+                System.out.println("Ячейка  - уже занята кораблем !!!");
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    private static boolean checkCoordinates(String line, String[][] map) {
+        boolean resultOk = true;
+        resultOk = resultOk && controlOpportunityParsing(line);
+        resultOk = resultOk && checkCellShip(line, map);
+        return resultOk;
     }
 
     public static void shipTable(String[][] player, int number){
