@@ -40,7 +40,8 @@ public class Battleship {
             }
         }
 
-        System.out.println("Вы начали играть в игру - Морской бой");
+        System.out.println("Вы начали играть в игру: " +  "▂ ▃ ▅ ▆ █ Морской бой █ ▆ ▅ ▃ ▂");
+        System.out.println();
 
         if(TEST){
             fillDefaultMap1(player1);
@@ -49,6 +50,10 @@ public class Battleship {
             shipTable(player1, 1);
             shipTable(player2, 2);
         }
+
+        printMap(player1);
+        System.out.println();
+        printMap(player2);
 
         int countDamagedShip1 = 0;
         int countDamagedShip2 = 0;
@@ -73,12 +78,14 @@ public class Battleship {
             System.out.println();
             System.out.println("◀ █ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ █ ▶");
             System.out.println("Карта игрока " + numberAttack);
+            System.out.println("Loading… ███████████ 100%");
             printMap(mapTemp);
+
 
             while (true) {
 
                 System.out.println();
-                System.out.println("Введите координаты для атаки игрок_" + number + " - x,y");
+                System.out.println("Ходит ИГРОК_" + number + " - введите координаты для атаки соперника:" + " x,y");
                 String line = sc.nextLine(); //x,y;
 
                 try {
@@ -247,7 +254,7 @@ public class Battleship {
             positionShips(player, "x,y " + " ■", 1);
         }
 
-        printMap(player);
+        //printMap(player);
 
 
     }
@@ -255,14 +262,35 @@ public class Battleship {
 
 
     public static void printMap(String[][] map) {
+
+        System.out.print("\t");
+        for (int i = 0; i < map.length; i++) {
+            System.out.print(i + "\t");
+
+        }
+
         for (int i = 0; i < map.length; i++) {
             System.out.println();
+            System.out.print(i + "\t");
+
             for (int j = 0; j < map.length; j++) {
-                System.out.print(map[i][j] + " ");
+
+                System.out.print(map[i][j] + "\t");
+
             }
+            System.out.print(i + " ");
+
+
         }
-        System.out.println();
-    }
+
+
+            System.out.println();
+        }
+
+
+
+
+
 
     public static void fillDefaultMap1(String[][] map) {
         map[0][1] = "\uD83D\uDEA2";
@@ -295,7 +323,7 @@ public class Battleship {
 
         map[8][6] = "\uD83D\uDEA2";
 
-        printMap(map);
+
 
     }
 
@@ -332,7 +360,7 @@ public class Battleship {
 
        map[8][2] = "\uD83D\uDEA2";
 
-       printMap(map);
+
 
     }
 
