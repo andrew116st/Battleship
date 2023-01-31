@@ -93,13 +93,20 @@ public class Battleship {
 
                 try {
                     x = parseX(line);
+
+                    line = line.replace(",", "");
+                    line = line.replace(".", "");
+                    line = line.toLowerCase();
                     y = parseY(line);
 
-                    break;
+                    if (y>=0 && y<=9) {
+                        break;
+                    }
 
                 } catch (NumberFormatException e){
-                    System.out.println("Введите координат повторно - Вы ошиблись при вводе");
+                    
                 }
+                System.out.println("Введите координат повторно - Вы ошиблись при вводе");
             }
 
             if (mapToCheck[x][y].equals("\uD83D\uDEA2")) {
@@ -180,9 +187,12 @@ public class Battleship {
             String coordFirst = coords[m];
             try {
                 int x = parseX(coordFirst);
-                int y = parseY(coordFirst);
             } catch (NumberFormatException e) {
                 System.out.println("ОШИБКА - при вводе координат корабля");
+                return false;
+            }
+            int y = parseY(coordFirst);
+            if (y<0 || y>9) {
                 return false;
             }
         }
@@ -304,7 +314,7 @@ public class Battleship {
             char letterChar = (char)(input + (int)'a');
             String letterString = String.valueOf(letterChar);
 
-            return letterString ;
+            return letterString;
         }
 
 
