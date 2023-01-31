@@ -8,7 +8,7 @@ public class Battleship {
     private static final int MAX_SHIPS_ARMADA = 20;
     private static final boolean TEST = true;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         String[][] player1 = new String[10][10];
         String[][] player2 = new String[10][10];
@@ -61,10 +61,19 @@ public class Battleship {
 
         while(countDamagedShip2 < MAX_SHIPS_ARMADA && countDamagedShip1 < MAX_SHIPS_ARMADA) {
             int number = currentMovePlayer1 ? 1 : 2;
+            int numberAttack = currentMovePlayer1 ? 2 : 1;
+
             String[][] mapToCheck = currentMovePlayer1 ? player2 : player1;
+
+            String[][] mapTemp = currentMovePlayer1 ? map2 : map1;
 
             int x = 0;
             int y = 0;
+
+            System.out.println();
+            System.out.println("◀ █ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ █ ▶");
+            System.out.println("Карта игрока " + numberAttack);
+            printMap(mapTemp);
 
             while (true) {
 
@@ -87,18 +96,8 @@ public class Battleship {
                 System.out.println("Вы попали в корабль");
                 mapToCheck[x][y] = "\uD83D\uDFE5";
 
-                if (number == 2) {
-                    System.out.println();
-                    System.out.println("Карта игрока 1");
-                    map1[x][y] = "\uD83D\uDFE5";
-                    printMap(map1);
-
-                }else if (number == 1){
-                    System.out.println();
-                    System.out.println("Карта игрока 2");
-                    map2[x][y] = "\uD83D\uDFE5";
-                    printMap(map2);
-                }
+                System.out.println();
+                mapTemp[x][y] = "\uD83D\uDFE5";
 
                 if (currentMovePlayer1) {
                     countDamagedShip2++;
@@ -111,17 +110,10 @@ public class Battleship {
                 currentMovePlayer1 = currentMovePlayer1 ? false : true;
                 System.out.println("Вы промахнулись");
 
-                if (number == 2) {
-                  map1[x][y] = "●";
-                  printMap(map1);
-
-                }else if (number == 1){
-                   map2[x][y] = "●";
-                    printMap(map2);
-                }
+                mapTemp[x][y] = "●";
 
             }
-
+            Thread.sleep(2000); // pause between moves
         }
 
         if (countDamagedShip2 == MAX_SHIPS_ARMADA){
