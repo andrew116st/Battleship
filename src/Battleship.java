@@ -8,6 +8,9 @@ public class Battleship {
     private static final int MAX_SHIPS_ARMADA = 20;
     private static final boolean TEST = true;
 
+    private static final String ANSI_RESET = "\u001B[0m";
+    private static final String ANSI_BLUE = "\u001B[34m";
+
     public static void main(String[] args) throws InterruptedException {
 
         String[][] player1 = new String[10][10];
@@ -141,12 +144,8 @@ public class Battleship {
 
     }
 
-    public static int parseY (String line) throws NumberFormatException {
-
-        char temp1 = line.charAt(2);
-        String temp2 = String.valueOf(temp1);
-        return Integer.parseInt(temp2);
-
+    public static int parseY (String line) {
+        return convertLettertoNumber(line.charAt(1));
     }
 
     public static void positionShips(String[][] player, String format, int sizeShip) {
@@ -263,22 +262,28 @@ public class Battleship {
 
     public static void printMap(String[][] map) {
 
-        System.out.print("\t");
-        for (int i = 0; i < map.length; i++) {
-            System.out.print(i + "\t");
+        char c;
 
-        }
+        for(c = 'A'; c <= 'J'; ++c)
+            System.out.print(ANSI_BLUE +"\t" + c + ANSI_RESET);
+
+
+        //System.out.print("\t");
+        //for (int i = 0; i < map.length; i++) {
+            //System.out.print(i + "\t");
+
+        //}
 
         for (int i = 0; i < map.length; i++) {
             System.out.println();
-            System.out.print(i + "\t");
+            System.out.print(ANSI_BLUE + i + "\t" + ANSI_RESET);
 
             for (int j = 0; j < map.length; j++) {
 
                 System.out.print(map[i][j] + "\t");
 
             }
-            System.out.print(i + " ");
+            System.out.print(ANSI_BLUE + i + " " + ANSI_RESET);
 
 
         }
@@ -287,7 +292,20 @@ public class Battleship {
             System.out.println();
         }
 
+        public static int convertLettertoNumber(char inputChar){
+            int number = (int)inputChar - 'a';
 
+            return number;
+        }
+
+
+        public static String convertNumbertoLetter(int input){
+
+            char letterChar = (char)(input + (int)'a');
+            String letterString = String.valueOf(letterChar);
+
+            return letterString ;
+        }
 
 
 
