@@ -6,12 +6,15 @@ import java.util.Scanner;
 public class Battleship {
     private static Scanner sc = new Scanner(System.in);
     private static final int MAX_SHIPS_ARMADA = 20;
-    private static final boolean TEST = false;
+    private static final boolean TEST = true;
 
     public static void main(String[] args) {
 
         String[][] player1 = new String[10][10];
         String[][] player2 = new String[10][10];
+
+        String[][] map1 = new String[10][10];
+        String[][] map2 = new String[10][10];
 
         for (int i = 0; i < player1.length; i++) {
             for (int j = 0; j < player1.length; j++) {
@@ -22,6 +25,18 @@ public class Battleship {
         for (int i = 0; i < player2.length; i++) {
             for (int j = 0; j < player2.length; j++) {
                 player2[i][j] = "⬜";
+            }
+        }
+
+        for (int i = 0; i < map1.length; i++) {
+            for (int j = 0; j < map1.length; j++) {
+                map1[i][j] = "⬜";
+            }
+        }
+
+        for (int i = 0; i < map2.length; i++) {
+            for (int j = 0; j < map2.length; j++) {
+                map2[i][j] = "⬜";
             }
         }
 
@@ -72,8 +87,22 @@ public class Battleship {
                 System.out.println("Вы попали в корабль");
                 mapToCheck[x][y] = "\uD83D\uDFE5";
 
+                if (number == 2) {
+                    System.out.println();
+                    System.out.println("Карта игрока 1");
+                    map1[x][y] = "\uD83D\uDFE5";
+                    printMap(map1);
+
+                }else if (number == 1){
+                    System.out.println();
+                    System.out.println("Карта игрока 2");
+                    map2[x][y] = "\uD83D\uDFE5";
+                    printMap(map2);
+                }
+
                 if (currentMovePlayer1) {
                     countDamagedShip2++;
+
                 } else  {
                     countDamagedShip1++;
                 }
@@ -81,6 +110,16 @@ public class Battleship {
             } else {
                 currentMovePlayer1 = currentMovePlayer1 ? false : true;
                 System.out.println("Вы промахнулись");
+
+                if (number == 2) {
+                  map1[x][y] = "●";
+                  printMap(map1);
+
+                }else if (number == 1){
+                   map2[x][y] = "●";
+                    printMap(map2);
+                }
+
             }
 
         }
@@ -192,7 +231,7 @@ public class Battleship {
         resultOk = resultOk && controlOpportunityParsing(line);
         resultOk = resultOk && checkSizeShip(line, sizeShip);
         resultOk = resultOk && checkCellShip(line, map);
-        
+
 
         return resultOk;
     }
@@ -265,9 +304,11 @@ public class Battleship {
         map[8][6] = "\uD83D\uDEA2";
 
         printMap(map);
+
     }
 
    ///////////////////////////////////////
+
    public static void fillDefaultMap2(String[][] map) {
        map[9][1] = "\uD83D\uDEA2";
        map[9][2] = "\uD83D\uDEA2";
@@ -300,7 +341,6 @@ public class Battleship {
        map[8][2] = "\uD83D\uDEA2";
 
        printMap(map);
-
 
     }
 
