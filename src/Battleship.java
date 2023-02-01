@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class Battleship {
     private static Scanner sc = new Scanner(System.in);
     private static final int MAX_SHIPS_ARMADA = 20;
-    private static final boolean TEST = true;
+    private static final boolean TEST = false;
 
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_BLUE = "\u001B[34m";
@@ -104,7 +104,7 @@ public class Battleship {
                     }
 
                 } catch (NumberFormatException e){
-                    
+
                 }
                 System.out.println("Введите координат повторно - Вы ошиблись при вводе");
             }
@@ -218,11 +218,53 @@ public class Battleship {
 
     }
 
+
+
+    private static boolean buildCellShip (String line, String[][] map) {
+        int x = 0;
+        int y = 0;
+
+        String[] coords = line.split(";");
+        //String line = sc.nextLine(); //x,y;
+        for (int i=0; i< coords.length; i++) {
+            String coord = coords[i];
+            x = parseX(coord);
+
+            coord = coord.replace(",", "");
+            coord = coord.replace(".", "");
+            coord = coord.toLowerCase();
+
+            y = parseY(coord);
+
+            for (int newX = x - 1; newX < x + 2; newX++) {                       // проверка выхода за игровое поле
+                if (newX < 0 || newX > 9) {
+                    continue;
+                }
+
+                for (int newY = y - 1; newY < y + 2; newY++) {               // проверка выхода за игровое поле
+                    if (newY < 0 || newY > 9) {
+                        continue;
+                    }
+
+                    if (map[newX][newY].equals("\uD83D\uDEA2")) {              // Есть сосед
+                        System.out.println("▓█▓█▓█▓" + " ◀  Ячейка - граница соседнего корабля !!! ▶ " +"▓█▓█▓█▓");
+                        System.out.println();
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+
+
+
     public static boolean checkSizeShip (String line, int sizeShip){
         String[] coords = line.split(";");
 
         if (coords.length == sizeShip){
-            System.out.println("Вы ввели правильные координаты ! " + "❤❤"+"❤❤");
+            System.out.println("Вы ввели координаты в правильном формате! " + "❤❤"+"❤❤");
             System.out.println();
             return true;
         }else{
@@ -239,7 +281,7 @@ public class Battleship {
         resultOk = resultOk && controlOpportunityParsing(line);
         resultOk = resultOk && checkSizeShip(line, sizeShip);
         resultOk = resultOk && checkCellShip(line, map);
-
+        resultOk = resultOk && buildCellShip(line, map);
 
         return resultOk;
     }
