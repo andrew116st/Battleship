@@ -99,7 +99,7 @@ public class Battleship {
                     line = line.toLowerCase();
                     y = parseY(line);
 
-                    if (y>=0 && y<=9) {
+                    if (y >= 0 && y <= 9) {
                         break;
                     }
 
@@ -160,6 +160,10 @@ public class Battleship {
         while (true) {
             System.out.println("Введите координаты кораблей. формат: " + format); // 1 штука
             line = sc.nextLine(); //x,y;x,y;x,y;x,y
+
+            line = line.replace(",", "");
+            line = line.replace(".", "");
+            line = line.toLowerCase();
 
 
             if (checkCoordinates(line, player, sizeShip)) {
@@ -225,9 +229,11 @@ public class Battleship {
         int y = 0;
 
         String[] coords = line.split(";");
-        //String line = sc.nextLine(); //x,y;
-        for (int i=0; i< coords.length; i++) {
+
+        for (int i = 0; i < coords.length; i++) {
             String coord = coords[i];
+
+
             x = parseX(coord);
 
             coord = coord.replace(",", "");
@@ -235,6 +241,8 @@ public class Battleship {
             coord = coord.toLowerCase();
 
             y = parseY(coord);
+
+            coord = coord.toLowerCase();
 
             for (int newX = x - 1; newX < x + 2; newX++) {                       // проверка выхода за игровое поле
                 if (newX < 0 || newX > 9) {
