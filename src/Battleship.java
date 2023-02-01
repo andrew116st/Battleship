@@ -247,7 +247,7 @@ public class Battleship {
                     }
 
                     if (map[newX][newY].equals("\uD83D\uDEA2")) {              // Есть сосед
-                        System.out.println("Ячейка  - граница соседнего корабля !!!");
+                        System.out.println("▓█▓█▓█▓" + " ◀  Ячейка - граница соседнего корабля !!! ▶ " +"▓█▓█▓█▓");
                         System.out.println();
                         return false;
                     }
