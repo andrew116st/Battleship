@@ -6,39 +6,26 @@ import java.util.Scanner;
 public class Battleship {
     private static Scanner sc = new Scanner(System.in);
     private static final int MAX_SHIPS_ARMADA = 20;
+    private static final int STEP = 1;
     private static final boolean TEST = false;
+    private static final int SIZE_BOARD = 10;
 
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_BLUE = "\u001B[34m";
 
     public static void main(String[] args) throws InterruptedException {
 
-        String[][] player1 = new String[10][10];
-        String[][] player2 = new String[10][10];
+        String[][] player1 = new String[SIZE_BOARD][SIZE_BOARD];
+        String[][] player2 = new String[SIZE_BOARD][SIZE_BOARD];
 
-        String[][] map1 = new String[10][10];
-        String[][] map2 = new String[10][10];
+        String[][] map1 = new String[SIZE_BOARD][SIZE_BOARD];
+        String[][] map2 = new String[SIZE_BOARD][SIZE_BOARD];
 
         for (int i = 0; i < player1.length; i++) {
             for (int j = 0; j < player1.length; j++) {
                 player1[i][j] = "⬜";
-            }
-        }
-
-        for (int i = 0; i < player2.length; i++) {
-            for (int j = 0; j < player2.length; j++) {
                 player2[i][j] = "⬜";
-            }
-        }
-
-        for (int i = 0; i < map1.length; i++) {
-            for (int j = 0; j < map1.length; j++) {
                 map1[i][j] = "⬜";
-            }
-        }
-
-        for (int i = 0; i < map2.length; i++) {
-            for (int j = 0; j < map2.length; j++) {
                 map2[i][j] = "⬜";
             }
         }
@@ -88,15 +75,11 @@ public class Battleship {
             while (true) {
 
                 System.out.println();
-                System.out.println("Ходит ИГРОК_" + number + " - введите координаты для атаки соперника:" + " x,y");
+                System.out.println("Ходит ИГРОК_" + number + " - введите координаты для атаки соперника:" + " 7f");
                 String line = sc.nextLine(); //x,y;
 
                 try {
                     x = parseX(line);
-
-                    line = line.replace(",", "");
-                    line = line.replace(".", "");
-                    line = line.toLowerCase();
                     y = parseY(line);
 
                     if (y >= 0 && y <= 9) {
@@ -152,6 +135,7 @@ public class Battleship {
     }
 
     public static int parseY (String line) {
+        line = line.replace(",", "").replace(".", "").toLowerCase();
         return convertLettertoNumber(line.charAt(1));
     }
 
@@ -160,12 +144,6 @@ public class Battleship {
         while (true) {
             System.out.println("Введите координаты кораблей. формат: " + format); // 1 штука
             line = sc.nextLine(); //x,y;x,y;x,y;x,y
-
-            line = line.replace(",", "");
-            line = line.replace(".", "");
-            line = line.toLowerCase();
-
-
             if (checkCoordinates(line, player, sizeShip)) {
                 break;
             }
@@ -196,7 +174,7 @@ public class Battleship {
                 return false;
             }
             int y = parseY(coordFirst);
-            if (y<0 || y>9) {
+            if (y < 0 || y > 9) {
                 return false;
             }
         }
@@ -223,7 +201,6 @@ public class Battleship {
     }
 
 
-
     private static boolean buildCellShip (String line, String[][] map) {
         int x = 0;
         int y = 0;
@@ -235,11 +212,6 @@ public class Battleship {
 
 
             x = parseX(coord);
-
-            coord = coord.replace(",", "");
-            coord = coord.replace(".", "");
-            coord = coord.toLowerCase();
-
             y = parseY(coord);
 
             coord = coord.toLowerCase();
@@ -286,10 +258,12 @@ public class Battleship {
 
     private static boolean checkCoordinates(String line, String[][] map, int sizeShip) {
         boolean resultOk = true;
-        resultOk = resultOk && controlOpportunityParsing(line);
-        resultOk = resultOk && checkSizeShip(line, sizeShip);
-        resultOk = resultOk && checkCellShip(line, map);
-        resultOk = resultOk && buildCellShip(line, map);
+
+        resultOk = resultOk && controlOpportunityParsing(line);   // проверка - при вводе координат корабля (не выходили за пределы игрового поля)
+        resultOk = resultOk && checkSizeShip(line, sizeShip);     // правильность координат: разделитель - ";"
+        resultOk = resultOk && checkShipCoordinatesALL(line);   // проверка что координаты для конкретного корабля - введены корректно (горизонталь - вертикаль)
+        resultOk = resultOk && checkCellShip(line, map);          // проверка что введенная ячейка  - не занята кораблем
+        resultOk = resultOk && buildCellShip(line, map);          // проверка что расставленные корабли - не соприкасаются границами
 
         return resultOk;
     }
@@ -299,18 +273,18 @@ public class Battleship {
         System.out.println();
         System.out.println("Необходимо раставить корабли - Игрок_" + number);
 
-        positionShips(player, "x,y;x,y;x,y;x,y " + " ■|■|■|■", 4);
+        positionShips(player, "5a;5b;5c;5d " + " ■|■|■|■", 4);
 
         for (int i = 0; i < 2; i++) {
-            positionShips(player, "x,y;x,y;x,y " + " ■|■|■",3);
+            positionShips(player, "5a;5b;5c " + " ■|■|■",3);
         }
 
         for (int i = 0; i < 3; i++) {
-            positionShips(player, "x,y;x,y " + " ■|■",2);
+            positionShips(player, "5c;5d " + " ■|■",2);
         }
 
         for (int i = 0; i < 4; i++) {
-            positionShips(player, "x,y " + " ■", 1);
+            positionShips(player, "5d" + " ■", 1);
         }
 
         //printMap(player);
@@ -343,31 +317,73 @@ public class Battleship {
                 System.out.print(map[i][j] + "\t");
 
             }
+
             System.out.print(ANSI_BLUE + i + " " + ANSI_RESET);
 
-
         }
 
 
-            System.out.println();
+        System.out.println();
+    }
+
+    public static int convertLettertoNumber(char inputChar){
+        int number = (int)inputChar - 'a';
+
+        return number;
+    }
+
+
+    public static boolean resultLineStepCharSubtract(String[] coords, int index) {
+
+        if (coords.length == 1) {
+            return true;
         }
 
-        public static int convertLettertoNumber(char inputChar){
-            int number = (int)inputChar - 'a';
+        boolean result = true;
 
-            return number;
+        char prevValue = coords[0].charAt(index);
+
+        for (int i = 1; i < coords.length; i++) {
+            char currentValue = coords[i].charAt(index);
+            result = result && (Math.abs(currentValue - prevValue) == STEP);
+            prevValue = currentValue;
         }
 
+        return result;
 
-        public static String convertNumbertoLetter(int input){
+    }
 
-            char letterChar = (char)(input + (int)'a');
-            String letterString = String.valueOf(letterChar);
-
-            return letterString;
+    public static boolean resultLineStepCharEqual(String[] coords, int index) {
+        if (coords.length == 1) {
+            return true;
         }
 
+        boolean result = true;
+        char prevValue = coords[0].charAt(index);
 
+        for (int i = 1; i < coords.length; i++) {
+            char currentValue = coords[i].charAt(index);
+            result = result && (currentValue == prevValue);
+            // prevValue = currentValue;
+        }
+
+        return result;
+
+    }
+
+
+    public static boolean checkShipCoordinatesALL(String line) {
+        String[] coords = line.split(";");
+
+        boolean byHorizontal = resultLineStepCharSubtract(coords, 0) && resultLineStepCharEqual(coords, 1); // по вертикали должно идти, цифры разные, буквы одинаковые
+        boolean byVertical = resultLineStepCharEqual(coords, 0) && resultLineStepCharSubtract(coords, 1); // по вертикали должно идти, буквы разные, цифры одинаковые
+        if (!byHorizontal && !byVertical) {
+            System.out.println("ОШИБКА - координаты для конкретного корабля - введены некорректно: НЕПОСЛЕДОВАТЕЛЬНЫЕ КООРДИНАТЫ");
+            return false;
+        }
+
+        return true;
+    }
 
 
     public static void fillDefaultMap1(String[][] map) {
@@ -376,15 +392,15 @@ public class Battleship {
         map[0][3] = "\uD83D\uDEA2";
         map[0][4] = "\uD83D\uDEA2";
 
-        map[1][2] = "\uD83D\uDEA2";
-        map[1][3] = "\uD83D\uDEA2";
-        map[1][4] = "\uD83D\uDEA2";
+        map[1][7] = "\uD83D\uDEA2";
+        map[1][8] = "\uD83D\uDEA2";
+        map[1][9] = "\uD83D\uDEA2";
 
         map[3][1] = "\uD83D\uDEA2";
         map[3][2] = "\uD83D\uDEA2";
         map[3][3] = "\uD83D\uDEA2";
 
-        map[4][4] = "\uD83D\uDEA2";
+        map[4][5] = "\uD83D\uDEA2";
         map[4][6] = "\uD83D\uDEA2";
 
         map[5][1] = "\uD83D\uDEA2";
@@ -393,9 +409,9 @@ public class Battleship {
         map[6][4] = "\uD83D\uDEA2";
         map[6][5] = "\uD83D\uDEA2";
 
-        map[8][1] = "\uD83D\uDEA2";
+        map[8][3] = "\uD83D\uDEA2";
 
-        map[7][6] = "\uD83D\uDEA2";
+        map[7][9] = "\uD83D\uDEA2";
 
         map[9][1] = "\uD83D\uDEA2";
 
@@ -424,19 +440,19 @@ public class Battleship {
        map[7][5] = "\uD83D\uDEA2";
        map[7][6] = "\uD83D\uDEA2";
 
-       map[3][1] = "\uD83D\uDEA2";
-       map[3][2] = "\uD83D\uDEA2";
+       map[4][1] = "\uD83D\uDEA2";
+       map[4][2] = "\uD83D\uDEA2";
 
-       map[4][6] = "\uD83D\uDEA2";
-       map[4][5] = "\uD83D\uDEA2";
+       map[4][8] = "\uD83D\uDEA2";
+       map[4][9] = "\uD83D\uDEA2";
 
        map[5][5] = "\uD83D\uDEA2";
 
-       map[3][4] = "\uD83D\uDEA2";
+       map[3][5] = "\uD83D\uDEA2";
 
        map[7][1] = "\uD83D\uDEA2";
 
-       map[8][2] = "\uD83D\uDEA2";
+       map[8][9] = "\uD83D\uDEA2";
 
 
 
