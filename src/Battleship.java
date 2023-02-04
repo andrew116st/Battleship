@@ -373,6 +373,7 @@ public class Battleship {
 
 
     public static boolean checkShipCoordinatesALL(String line) {
+        line = line.replace(",", "").replace(".", "").toLowerCase();
         String[] coords = line.split(";");
 
         boolean byHorizontal = resultLineStepCharSubtract(coords, 0) && resultLineStepCharEqual(coords, 1); // по вертикали должно идти, цифры разные, буквы одинаковые
