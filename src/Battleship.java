@@ -7,8 +7,11 @@ public class Battleship {
     private static Scanner sc = new Scanner(System.in);
     private static final int MAX_SHIPS_ARMADA = 20;
     private static final int STEP = 1;
-    private static final boolean TEST = false;
+    private static final boolean TEST = true;
     private static final int SIZE_BOARD = 10;
+
+    private static final int SIZE_MIN = 0;
+    private static final int SIZE_MAX = 9;
 
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_BLUE = "\u001B[34m";
@@ -70,6 +73,8 @@ public class Battleship {
             System.out.println("Карта игрока " + numberAttack);
             System.out.println("Loading… ███████████ 100%");
             printMap(mapTemp);
+            printMap(mapToCheck);
+
 
 
             while (true) {
@@ -98,6 +103,12 @@ public class Battleship {
 
                 System.out.println();
                 mapTemp[x][y] = "\uD83D\uDFE5";
+
+                if (completeDestructionShip(x, y, x, y, mapToCheck)) {
+                    System.out.println("Утопил");
+                } else {
+                    System.out.println("Ранил");
+                }
 
                 if (currentMovePlayer1) {
                     countDamagedShip2++;
@@ -274,17 +285,21 @@ public class Battleship {
         System.out.println("Необходимо раставить корабли - Игрок_" + number);
 
         positionShips(player, "5a;5b;5c;5d " + " ■|■|■|■", 4);
+        printMap(player);
 
         for (int i = 0; i < 2; i++) {
             positionShips(player, "5a;5b;5c " + " ■|■|■",3);
+            printMap(player);
         }
 
         for (int i = 0; i < 3; i++) {
             positionShips(player, "5c;5d " + " ■|■",2);
+            printMap(player);
         }
 
         for (int i = 0; i < 4; i++) {
             positionShips(player, "5d" + " ■", 1);
+            printMap(player);
         }
 
         //printMap(player);
@@ -384,6 +399,42 @@ public class Battleship {
         }
 
         return true;
+    }
+
+    public static boolean completeDestructionShip(int xToCheck, int yToCheck, int xToIgnore, int yToIgnore, String[][] map){
+        boolean result = true; //false - только подбил, true - утопил полностью
+
+        for (int newX = xToCheck - 1; newX < xToCheck + 2; newX++) {                       // проверка выхода за игровое поле
+            if (newX < SIZE_MIN || newX > SIZE_MAX) {
+                continue;
+            }
+
+            for (int newY = yToCheck - 1; newY < yToCheck + 2; newY++) {               // проверка выхода за игровое поле
+                if (newY < SIZE_MIN || newY > SIZE_MAX) {
+                    continue;
+                }
+
+                if ((newX == xToCheck) && (newY == yToCheck)) { //мы не проверяем сами себя (туда куда пришелся удар)
+                    continue;
+                }
+
+                if (!((newX == xToIgnore) && (newY == yToIgnore))) { //проверяем только если это не те координаты, которые мы должны игнорить. И используем только координаты в рамках поля
+                    String valueOfCell = map[newX][newY]; //либо корабль, либо красный квадрат, либо синий квадрат
+                    if (valueOfCell.equals("\uD83D\uDEA2")) {//unicode корабля
+                        result = result && false;
+                    } else if (valueOfCell.equals("\uD83D\uDFE5")) {//unicode красного квадрата
+                        result = result && completeDestructionShip(newX, newY, xToCheck, yToCheck, map); // если вокруг синие квадраты, то она вернет true
+                    } else if (valueOfCell.equals("⬜")) {
+                        result = result && true;
+                    }
+                }
+
+            }
+
+        }
+
+        return result;
+
     }
 
 
