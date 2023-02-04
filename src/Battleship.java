@@ -10,6 +10,9 @@ public class Battleship {
     private static final boolean TEST = true;
     private static final int SIZE_BOARD = 10;
 
+    private static final int SIZE_MIN = 0;
+    private static final int SIZE_MAX = 9;
+
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_BLUE = "\u001B[34m";
 
@@ -401,92 +404,36 @@ public class Battleship {
     public static boolean completeDestructionShip(int xToCheck, int yToCheck, int xToIgnore, int yToIgnore, String[][] map){
         boolean result = true; //false - только подбил, true - утопил полностью
 
-        // движение влево по X
-        int xUp = xToCheck - 1;
-        int yUp = yToCheck;
-        boolean xUpOk = xUp >= 0 && xUp <= 9;
-        boolean yUpOk = yUp >= 0 && yUp <= 9;
-
-        if (((xUp != xToIgnore) || (yUp != yToIgnore)) && xUpOk && yUpOk) { //проверяем только если это не те координаты, которые мы должны игнорить. И используем только координаты в рамках поля
-            String valueOfCell = map[xUp][yUp]; //либо корабль, либо красный квадрат, либо синий квадрат
-            if (valueOfCell.equals("\uD83D\uDEA2")) {//unicode корабля
-                result = result && false;
-            } else if (valueOfCell.equals("\uD83D\uDFE5")) {//unicode красного квадрата
-                result = result && completeDestructionShip(xUp, yUp, xToCheck, yToCheck, map); // если вокруг синие квадраты, то она вернет true
-            } else if (valueOfCell.equals("⬜")) {
-                result = result && true;
+        for (int newX = xToCheck - 1; newX < xToCheck + 2; newX++) {                       // проверка выхода за игровое поле
+            if (newX < SIZE_MIN || newX > SIZE_MAX) {
+                continue;
             }
-        }
 
-        // движение вправо по X
-        int xDown = xToCheck + 1;
-        int yDown = yToCheck;
-        boolean xDownOk = xDown >= 0 && xDown <=9;
-        boolean yDownOk = yDown >= 0 && yDown <=9;
+            for (int newY = yToCheck - 1; newY < yToCheck + 2; newY++) {               // проверка выхода за игровое поле
+                if (newY < SIZE_MIN || newY > SIZE_MAX) {
+                    continue;
+                }
 
-        if (((xDown != xToIgnore) || (yDown != yToIgnore)) && xDownOk && yDownOk) { //проверяем только если это не те координаты, которые мы должны игнорить
-            String valueOfCell = map[xDown][yDown]; //либо корабль, либо красный квадрат, либо синий квадрат
-            if (valueOfCell.equals("\uD83D\uDEA2")) {//unicode корабля
-                result = result && false;
-            } else if (valueOfCell.equals("\uD83D\uDFE5")) {//unicode красного квадрата
-                result = result && completeDestructionShip(xDown, yDown, xToCheck, yToCheck, map); // если вокруг синие квадраты, то она вернет true
-            } else if (valueOfCell.equals("⬜")) {
-                result = result && true;
+                if ((newX == xToCheck) && (newY == yToCheck)) { //мы не проверяем сами себя (туда куда пришелся удар)
+                    continue;
+                }
+
+                if (!((newX == xToIgnore) && (newY == yToIgnore))) { //проверяем только если это не те координаты, которые мы должны игнорить. И используем только координаты в рамках поля
+                    String valueOfCell = map[newX][newY]; //либо корабль, либо красный квадрат, либо синий квадрат
+                    if (valueOfCell.equals("\uD83D\uDEA2")) {//unicode корабля
+                        result = result && false;
+                    } else if (valueOfCell.equals("\uD83D\uDFE5")) {//unicode красного квадрата
+                        result = result && completeDestructionShip(newX, newY, xToCheck, yToCheck, map); // если вокруг синие квадраты, то она вернет true
+                    } else if (valueOfCell.equals("⬜")) {
+                        result = result && true;
+                    }
+                }
+
             }
-        }
 
-
-        // движение вверх по Y
-        int xRight = xToCheck;
-        int yRight = yToCheck + 1;
-        boolean xRightOk = xRight >= 0 && xRight <=9;
-        boolean yRightOk = yRight >= 0 && yRight <=9;
-
-        if (((xRight != xToIgnore) || (yRight != yToIgnore)) && xRightOk && yRightOk)  { //проверяем только если это не те координаты, которые мы должны игнорить
-            String valueOfCell = map[xRight][yRight]; //либо корабль, либо красный квадрат, либо синий квадрат
-            if (valueOfCell.equals("\uD83D\uDEA2")) {//unicode корабля
-                result = result && false;
-            } else if (valueOfCell.equals("\uD83D\uDFE5")) { //unicode красного квадрата
-                result = result && completeDestructionShip(xRight, yRight, xToCheck, yToCheck, map); // если вокруг синие квадраты, то она вернет true
-            } else if (valueOfCell.equals("⬜")) {
-                result = result && true;
-            }
-        }
-
-
-        //  движение вниз по Y
-        int xLeft = xToCheck;
-        int yLeft = yToCheck - 1;
-        boolean xLeftOk = xLeft >= 0 && xLeft <=9;
-        boolean yLeftOk = yLeft >= 0 && yLeft <=9;
-
-        if (((xLeft != xToIgnore) || (yLeft != yToIgnore))  && xLeftOk && yLeftOk) { //проверяем только если это не те координаты, которые мы должны игнорить
-            String valueOfCell = map[xLeft][yLeft]; //либо корабль, либо красный квадрат, либо синий квадрат
-            if (valueOfCell.equals("\uD83D\uDEA2")) { //unicode корабля
-                result = result && false;
-            } else if (valueOfCell.equals("\uD83D\uDFE5")) {//unicode красного квадрата
-                result = result && completeDestructionShip(xLeft, yLeft, xToCheck, yToCheck, map); // если вокруг синие квадраты, то она вернет true
-            } else if (valueOfCell.equals("⬜")) {
-                result = result && true;
-            }
         }
 
         return result;
-
-        /*
-        int sh = 0;
-        boolean shipKvadrat  = map[x][y].equals("\uD83D\uDEA2");
-
-        if (shipKvadrat = true)) {
-
-            xToCheck
-
-            System.out.println("Ячейка  - уже занята кораблем !!!");
-            return result;
-        } else if (map[x][y] = "⬜";) {
-            System.out.println("Пустая ячейка  - на ней НЕТ KОРАБЛЯ !!!"
-        }
-*/
 
     }
 
