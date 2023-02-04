@@ -7,7 +7,7 @@ public class Battleship {
     private static Scanner sc = new Scanner(System.in);
     private static final int MAX_SHIPS_ARMADA = 20;
     private static final int STEP = 1;
-    private static final boolean TEST = false;
+    private static final boolean TEST = true;
     private static final int SIZE_BOARD = 10;
 
     private static final String ANSI_RESET = "\u001B[0m";
@@ -70,6 +70,8 @@ public class Battleship {
             System.out.println("Карта игрока " + numberAttack);
             System.out.println("Loading… ███████████ 100%");
             printMap(mapTemp);
+            printMap(mapToCheck);
+
 
 
             while (true) {
@@ -98,6 +100,12 @@ public class Battleship {
 
                 System.out.println();
                 mapTemp[x][y] = "\uD83D\uDFE5";
+
+                if (completeDestructionShip(x, y, x, y, mapToCheck)) {
+                    System.out.println("Утопил");
+                } else {
+                    System.out.println("Ранил");
+                }
 
                 if (currentMovePlayer1) {
                     countDamagedShip2++;
@@ -274,17 +282,21 @@ public class Battleship {
         System.out.println("Необходимо раставить корабли - Игрок_" + number);
 
         positionShips(player, "5a;5b;5c;5d " + " ■|■|■|■", 4);
+        printMap(player);
 
         for (int i = 0; i < 2; i++) {
             positionShips(player, "5a;5b;5c " + " ■|■|■",3);
+            printMap(player);
         }
 
         for (int i = 0; i < 3; i++) {
             positionShips(player, "5c;5d " + " ■|■",2);
+            printMap(player);
         }
 
         for (int i = 0; i < 4; i++) {
             positionShips(player, "5d" + " ■", 1);
+            printMap(player);
         }
 
         //printMap(player);
@@ -384,6 +396,98 @@ public class Battleship {
         }
 
         return true;
+    }
+
+    public static boolean completeDestructionShip(int xToCheck, int yToCheck, int xToIgnore, int yToIgnore, String[][] map){
+        boolean result = true; //false - только подбил, true - утопил полностью
+
+        // движение влево по X
+        int xUp = xToCheck - 1;
+        int yUp = yToCheck;
+        boolean xUpOk = xUp >= 0 && xUp <= 9;
+        boolean yUpOk = yUp >= 0 && yUp <= 9;
+
+        if (((xUp != xToIgnore) || (yUp != yToIgnore)) && xUpOk && yUpOk) { //проверяем только если это не те координаты, которые мы должны игнорить. И используем только координаты в рамках поля
+            String valueOfCell = map[xUp][yUp]; //либо корабль, либо красный квадрат, либо синий квадрат
+            if (valueOfCell.equals("\uD83D\uDEA2")) {//unicode корабля
+                result = result && false;
+            } else if (valueOfCell.equals("\uD83D\uDFE5")) {//unicode красного квадрата
+                result = result && completeDestructionShip(xUp, yUp, xToCheck, yToCheck, map); // если вокруг синие квадраты, то она вернет true
+            } else if (valueOfCell.equals("⬜")) {
+                result = result && true;
+            }
+        }
+
+        // движение вправо по X
+        int xDown = xToCheck + 1;
+        int yDown = yToCheck;
+        boolean xDownOk = xDown >= 0 && xDown <=9;
+        boolean yDownOk = yDown >= 0 && yDown <=9;
+
+        if (((xDown != xToIgnore) || (yDown != yToIgnore)) && xDownOk && yDownOk) { //проверяем только если это не те координаты, которые мы должны игнорить
+            String valueOfCell = map[xDown][yDown]; //либо корабль, либо красный квадрат, либо синий квадрат
+            if (valueOfCell.equals("\uD83D\uDEA2")) {//unicode корабля
+                result = result && false;
+            } else if (valueOfCell.equals("\uD83D\uDFE5")) {//unicode красного квадрата
+                result = result && completeDestructionShip(xDown, yDown, xToCheck, yToCheck, map); // если вокруг синие квадраты, то она вернет true
+            } else if (valueOfCell.equals("⬜")) {
+                result = result && true;
+            }
+        }
+
+
+        // движение вверх по Y
+        int xRight = xToCheck;
+        int yRight = yToCheck + 1;
+        boolean xRightOk = xRight >= 0 && xRight <=9;
+        boolean yRightOk = yRight >= 0 && yRight <=9;
+
+        if (((xRight != xToIgnore) || (yRight != yToIgnore)) && xRightOk && yRightOk)  { //проверяем только если это не те координаты, которые мы должны игнорить
+            String valueOfCell = map[xRight][yRight]; //либо корабль, либо красный квадрат, либо синий квадрат
+            if (valueOfCell.equals("\uD83D\uDEA2")) {//unicode корабля
+                result = result && false;
+            } else if (valueOfCell.equals("\uD83D\uDFE5")) { //unicode красного квадрата
+                result = result && completeDestructionShip(xRight, yRight, xToCheck, yToCheck, map); // если вокруг синие квадраты, то она вернет true
+            } else if (valueOfCell.equals("⬜")) {
+                result = result && true;
+            }
+        }
+
+
+        //  движение вниз по Y
+        int xLeft = xToCheck;
+        int yLeft = yToCheck - 1;
+        boolean xLeftOk = xLeft >= 0 && xLeft <=9;
+        boolean yLeftOk = yLeft >= 0 && yLeft <=9;
+
+        if (((xLeft != xToIgnore) || (yLeft != yToIgnore))  && xLeftOk && yLeftOk) { //проверяем только если это не те координаты, которые мы должны игнорить
+            String valueOfCell = map[xLeft][yLeft]; //либо корабль, либо красный квадрат, либо синий квадрат
+            if (valueOfCell.equals("\uD83D\uDEA2")) { //unicode корабля
+                result = result && false;
+            } else if (valueOfCell.equals("\uD83D\uDFE5")) {//unicode красного квадрата
+                result = result && completeDestructionShip(xLeft, yLeft, xToCheck, yToCheck, map); // если вокруг синие квадраты, то она вернет true
+            } else if (valueOfCell.equals("⬜")) {
+                result = result && true;
+            }
+        }
+
+        return result;
+
+        /*
+        int sh = 0;
+        boolean shipKvadrat  = map[x][y].equals("\uD83D\uDEA2");
+
+        if (shipKvadrat = true)) {
+
+            xToCheck
+
+            System.out.println("Ячейка  - уже занята кораблем !!!");
+            return result;
+        } else if (map[x][y] = "⬜";) {
+            System.out.println("Пустая ячейка  - на ней НЕТ KОРАБЛЯ !!!"
+        }
+*/
+
     }
 
 
