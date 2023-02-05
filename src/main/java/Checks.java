@@ -32,7 +32,7 @@ public class Checks {
             int x = Utils.parseX(coordFirst);
             int y = Utils.parseY(coordFirst);
 
-            if (map[x][y].equals("\uD83D\uDEA2")){
+            if (map[x][y].equals("\uD83D\uDEA2")){     // symbol ship
                 System.out.println("Ячейка  - уже занята кораблем !!!");
                 return false;
             }
@@ -67,7 +67,7 @@ public class Checks {
                         continue;
                     }
 
-                    if (map[newX][newY].equals("\uD83D\uDEA2")) {              // Есть сосед
+                    if (map[newX][newY].equals("\uD83D\uDEA2")) {      // symbol ship   -  Есть сосед
                         System.out.println("▓█▓█▓█▓" + " ◀  Ячейка - граница соседнего корабля !!! ▶ " +"▓█▓█▓█▓");
                         System.out.println();
                         return false;
@@ -85,11 +85,11 @@ public class Checks {
         String[] coords = line.split(";");
 
         if (coords.length == sizeShip){
-            System.out.println("Вы ввели координаты в правильном формате! " + "❤❤"+"❤❤");
+            System.out.println("Вы ввели корректные координаты корабля " + "❤❤"+"❤❤");
             System.out.println();
             return true;
         }else{
-            System.out.println("ОШИБКА - Введите координаты заново! " + "✖✖✖✖");
+            System.out.println("ОШИБКА: Введите координаты корабля - заново! " + "✖✖✖✖");
             System.out.println();
             return false;
         }
@@ -102,7 +102,7 @@ public class Checks {
 
         resultOk = resultOk && controlOpportunityParsing(line);   // проверка - при вводе координат корабля (не выходили за пределы игрового поля)
         resultOk = resultOk && checkSizeShip(line, sizeShip);     // правильность координат: разделитель - ";"
-        resultOk = resultOk && checkShipCoordinatesALL(line);   // проверка что координаты для конкретного корабля - введены корректно (горизонталь - вертикаль)
+        resultOk = resultOk && checkShipCoordinatesALL(line);     // проверка что координаты для конкретного корабля - введены корректно (горизонталь - вертикаль)
         resultOk = resultOk && checkCellShip(line, map);          // проверка что введенная ячейка  - не занята кораблем
         resultOk = resultOk && buildCellShip(line, map);          // проверка что расставленные корабли - не соприкасаются границами
 
@@ -182,9 +182,9 @@ public class Checks {
 
                 if (!((newX == xToIgnore) && (newY == yToIgnore))) { //проверяем только если это не те координаты, которые мы должны игнорить. И используем только координаты в рамках поля
                     String valueOfCell = map[newX][newY]; //либо корабль, либо красный квадрат, либо синий квадрат
-                    if (valueOfCell.equals("\uD83D\uDEA2")) {//unicode корабля
+                    if (valueOfCell.equals("\uD83D\uDEA2")) {           // symbol ship
                         result = result && false;
-                    } else if (valueOfCell.equals("\uD83D\uDFE5")) {//unicode красного квадрата
+                    } else if (valueOfCell.equals("\uD83D\uDFE5")) {        // red square
                         result = result && completeDestructionShip(newX, newY, xToCheck, yToCheck, map); // если вокруг синие квадраты, то она вернет true
                     } else if (valueOfCell.equals("⬜")) {
                         result = result && true;
