@@ -4,17 +4,11 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Battleship {
-    private static Scanner sc = new Scanner(System.in);
+    public static Scanner sc = new Scanner(System.in);
     private static final int MAX_SHIPS_ARMADA = 20;
-    private static final int STEP = 1;
-    private static final boolean TEST = true;
+
+    private static final boolean TEST = false;
     private static final int SIZE_BOARD = 10;
-
-    private static final int SIZE_MIN = 0;
-    private static final int SIZE_MAX = 9;
-
-    private static final String ANSI_RESET = "\u001B[0m";
-    private static final String ANSI_BLUE = "\u001B[34m";
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -37,16 +31,16 @@ public class Battleship {
         System.out.println();
 
         if(TEST){
-            fillDefaultMap1(player1);
-            fillDefaultMap2(player2);
+            DispositionShips.fillDefaultMap1(player1);
+            DispositionShips.fillDefaultMap2(player2);
          } else {
-            shipTable(player1, 1);
-            shipTable(player2, 2);
+            DispositionShips.shipTable(player1, 1);
+            DispositionShips.shipTable(player2, 2);
         }
 
-        printMap(player1);
+        Utils.printMap(player1);
         System.out.println();
-        printMap(player2);
+        Utils.printMap(player2);
 
         int countDamagedShip1 = 0;
         int countDamagedShip2 = 0;
@@ -72,8 +66,8 @@ public class Battleship {
             System.out.println("◀ █ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ █ ▶");
             System.out.println("Карта игрока " + numberAttack);
             System.out.println("Loading… ███████████ 100%");
-            printMap(mapTemp);
-            printMap(mapToCheck);
+            Utils.printMap(mapTemp);
+            Utils.printMap(mapToCheck);
 
 
 
@@ -84,8 +78,8 @@ public class Battleship {
                 String line = sc.nextLine(); //x,y;
 
                 try {
-                    x = parseX(line);
-                    y = parseY(line);
+                    x = Utils.parseX(line);
+                    y = Utils.parseY(line);
 
                     if (y >= 0 && y <= 9) {
                         break;
@@ -104,7 +98,7 @@ public class Battleship {
                 System.out.println();
                 mapTemp[x][y] = "\uD83D\uDFE5";
 
-                if (completeDestructionShip(x, y, x, y, mapToCheck)) {
+                if (Checks.completeDestructionShip(x, y, x, y, mapToCheck)) {
                     System.out.println("Утопил");
                 } else {
                     System.out.println("Ранил");
@@ -137,377 +131,5 @@ public class Battleship {
 
     }
 
-    public static int parseX (String line) throws NumberFormatException  {
-
-        char temp1 = line.charAt(0);
-        String temp2 = String.valueOf(temp1);
-        return Integer.parseInt(temp2);
-
-    }
-
-    public static int parseY (String line) {
-        line = line.replace(",", "").replace(".", "").toLowerCase();
-        return convertLettertoNumber(line.charAt(1));
-    }
-
-    public static void positionShips(String[][] player, String format, int sizeShip) {
-        String line = "";
-        while (true) {
-            System.out.println("Введите координаты кораблей. формат: " + format); // 1 штука
-            line = sc.nextLine(); //x,y;x,y;x,y;x,y
-            if (checkCoordinates(line, player, sizeShip)) {
-                break;
-            }
-        }
-
-        String[] coords = line.split(";");
-
-        for (int m = 0; m < coords.length; m++) {
-            String coordFirst = coords[m];
-
-            int x = parseX(coordFirst);
-            int y = parseY(coordFirst);
-
-            player[x][y] = "\uD83D\uDEA2";
-        }
-
-    }
-
-    public static boolean controlOpportunityParsing(String line){
-        String[] coords = line.split(";");
-
-        for (int m = 0; m < coords.length; m++) {
-            String coordFirst = coords[m];
-            try {
-                int x = parseX(coordFirst);
-            } catch (NumberFormatException e) {
-                System.out.println("ОШИБКА - при вводе координат корабля");
-                return false;
-            }
-            int y = parseY(coordFirst);
-            if (y < 0 || y > 9) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean checkCellShip (String line, String[][] map){
-
-        String[] coords = line.split(";");
-
-        for (int m = 0; m < coords.length; m++) {
-            String coordFirst = coords[m];
-
-            int x = parseX(coordFirst);
-            int y = parseY(coordFirst);
-
-            if (map[x][y].equals("\uD83D\uDEA2")){
-                System.out.println("Ячейка  - уже занята кораблем !!!");
-                return false;
-            }
-        }
-        return true;
-
-    }
-
-
-    private static boolean buildCellShip (String line, String[][] map) {
-        int x = 0;
-        int y = 0;
-
-        String[] coords = line.split(";");
-
-        for (int i = 0; i < coords.length; i++) {
-            String coord = coords[i];
-
-
-            x = parseX(coord);
-            y = parseY(coord);
-
-            coord = coord.toLowerCase();
-
-            for (int newX = x - 1; newX < x + 2; newX++) {                       // проверка выхода за игровое поле
-                if (newX < 0 || newX > 9) {
-                    continue;
-                }
-
-                for (int newY = y - 1; newY < y + 2; newY++) {               // проверка выхода за игровое поле
-                    if (newY < 0 || newY > 9) {
-                        continue;
-                    }
-
-                    if (map[newX][newY].equals("\uD83D\uDEA2")) {              // Есть сосед
-                        System.out.println("▓█▓█▓█▓" + " ◀  Ячейка - граница соседнего корабля !!! ▶ " +"▓█▓█▓█▓");
-                        System.out.println();
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-
-
-
-    public static boolean checkSizeShip (String line, int sizeShip){
-        String[] coords = line.split(";");
-
-        if (coords.length == sizeShip){
-            System.out.println("Вы ввели координаты в правильном формате! " + "❤❤"+"❤❤");
-            System.out.println();
-            return true;
-        }else{
-            System.out.println("ОШИБКА - Введите координаты заново! " + "✖✖✖✖");
-            System.out.println();
-          return false;
-        }
-
-    }
-
-
-    private static boolean checkCoordinates(String line, String[][] map, int sizeShip) {
-        boolean resultOk = true;
-
-        resultOk = resultOk && controlOpportunityParsing(line);   // проверка - при вводе координат корабля (не выходили за пределы игрового поля)
-        resultOk = resultOk && checkSizeShip(line, sizeShip);     // правильность координат: разделитель - ";"
-        resultOk = resultOk && checkShipCoordinatesALL(line);   // проверка что координаты для конкретного корабля - введены корректно (горизонталь - вертикаль)
-        resultOk = resultOk && checkCellShip(line, map);          // проверка что введенная ячейка  - не занята кораблем
-        resultOk = resultOk && buildCellShip(line, map);          // проверка что расставленные корабли - не соприкасаются границами
-
-        return resultOk;
-    }
-
-    public static void shipTable(String[][] player, int number){
-
-        System.out.println();
-        System.out.println("Необходимо раставить корабли - Игрок_" + number);
-
-        positionShips(player, "5a;5b;5c;5d " + " ■|■|■|■", 4);
-        printMap(player);
-
-        for (int i = 0; i < 2; i++) {
-            positionShips(player, "5a;5b;5c " + " ■|■|■",3);
-            printMap(player);
-        }
-
-        for (int i = 0; i < 3; i++) {
-            positionShips(player, "5c;5d " + " ■|■",2);
-            printMap(player);
-        }
-
-        for (int i = 0; i < 4; i++) {
-            positionShips(player, "5d" + " ■", 1);
-            printMap(player);
-        }
-
-        //printMap(player);
-
-
-    }
-
-
-
-    public static void printMap(String[][] map) {
-
-        char c;
-
-        for(c = 'A'; c <= 'J'; ++c)
-            System.out.print(ANSI_BLUE +"\t" + c + ANSI_RESET);
-
-
-        //System.out.print("\t");
-        //for (int i = 0; i < map.length; i++) {
-            //System.out.print(i + "\t");
-
-        //}
-
-        for (int i = 0; i < map.length; i++) {
-            System.out.println();
-            System.out.print(ANSI_BLUE + i + "\t" + ANSI_RESET);
-
-            for (int j = 0; j < map.length; j++) {
-
-                System.out.print(map[i][j] + "\t");
-
-            }
-
-            System.out.print(ANSI_BLUE + i + " " + ANSI_RESET);
-
-        }
-
-
-        System.out.println();
-    }
-
-    public static int convertLettertoNumber(char inputChar){
-        int number = (int)inputChar - 'a';
-
-        return number;
-    }
-
-
-    public static boolean resultLineStepCharSubtract(String[] coords, int index) {
-
-        if (coords.length == 1) {
-            return true;
-        }
-
-        boolean result = true;
-
-        char prevValue = coords[0].charAt(index);
-
-        for (int i = 1; i < coords.length; i++) {
-            char currentValue = coords[i].charAt(index);
-            result = result && (Math.abs(currentValue - prevValue) == STEP);
-            prevValue = currentValue;
-        }
-
-        return result;
-
-    }
-
-    public static boolean resultLineStepCharEqual(String[] coords, int index) {
-        if (coords.length == 1) {
-            return true;
-        }
-
-        boolean result = true;
-        char prevValue = coords[0].charAt(index);
-
-        for (int i = 1; i < coords.length; i++) {
-            char currentValue = coords[i].charAt(index);
-            result = result && (currentValue == prevValue);
-            // prevValue = currentValue;
-        }
-
-        return result;
-
-    }
-
-
-    public static boolean checkShipCoordinatesALL(String line) {
-        line = line.replace(",", "").replace(".", "").toLowerCase();
-        String[] coords = line.split(";");
-
-        boolean byHorizontal = resultLineStepCharSubtract(coords, 0) && resultLineStepCharEqual(coords, 1); // по вертикали должно идти, цифры разные, буквы одинаковые
-        boolean byVertical = resultLineStepCharEqual(coords, 0) && resultLineStepCharSubtract(coords, 1); // по вертикали должно идти, буквы разные, цифры одинаковые
-        if (!byHorizontal && !byVertical) {
-            System.out.println("ОШИБКА - координаты для конкретного корабля - введены некорректно: НЕПОСЛЕДОВАТЕЛЬНЫЕ КООРДИНАТЫ");
-            return false;
-        }
-
-        return true;
-    }
-
-    public static boolean completeDestructionShip(int xToCheck, int yToCheck, int xToIgnore, int yToIgnore, String[][] map){
-        boolean result = true; //false - только подбил, true - утопил полностью
-
-        for (int newX = xToCheck - 1; newX < xToCheck + 2; newX++) {                       // проверка выхода за игровое поле
-            if (newX < SIZE_MIN || newX > SIZE_MAX) {
-                continue;
-            }
-
-            for (int newY = yToCheck - 1; newY < yToCheck + 2; newY++) {               // проверка выхода за игровое поле
-                if (newY < SIZE_MIN || newY > SIZE_MAX) {
-                    continue;
-                }
-
-                if ((newX == xToCheck) && (newY == yToCheck)) { //мы не проверяем сами себя (туда куда пришелся удар)
-                    continue;
-                }
-
-                if (!((newX == xToIgnore) && (newY == yToIgnore))) { //проверяем только если это не те координаты, которые мы должны игнорить. И используем только координаты в рамках поля
-                    String valueOfCell = map[newX][newY]; //либо корабль, либо красный квадрат, либо синий квадрат
-                    if (valueOfCell.equals("\uD83D\uDEA2")) {//unicode корабля
-                        result = result && false;
-                    } else if (valueOfCell.equals("\uD83D\uDFE5")) {//unicode красного квадрата
-                        result = result && completeDestructionShip(newX, newY, xToCheck, yToCheck, map); // если вокруг синие квадраты, то она вернет true
-                    } else if (valueOfCell.equals("⬜")) {
-                        result = result && true;
-                    }
-                }
-
-            }
-
-        }
-
-        return result;
-
-    }
-
-
-    public static void fillDefaultMap1(String[][] map) {
-        map[0][1] = "\uD83D\uDEA2";
-        map[0][2] = "\uD83D\uDEA2";
-        map[0][3] = "\uD83D\uDEA2";
-        map[0][4] = "\uD83D\uDEA2";
-
-        map[1][7] = "\uD83D\uDEA2";
-        map[1][8] = "\uD83D\uDEA2";
-        map[1][9] = "\uD83D\uDEA2";
-
-        map[3][1] = "\uD83D\uDEA2";
-        map[3][2] = "\uD83D\uDEA2";
-        map[3][3] = "\uD83D\uDEA2";
-
-        map[4][5] = "\uD83D\uDEA2";
-        map[4][6] = "\uD83D\uDEA2";
-
-        map[5][1] = "\uD83D\uDEA2";
-        map[5][2] = "\uD83D\uDEA2";
-
-        map[6][4] = "\uD83D\uDEA2";
-        map[6][5] = "\uD83D\uDEA2";
-
-        map[8][3] = "\uD83D\uDEA2";
-
-        map[7][9] = "\uD83D\uDEA2";
-
-        map[9][1] = "\uD83D\uDEA2";
-
-        map[8][6] = "\uD83D\uDEA2";
-
-
-
-    }
-
-   ///////////////////////////////////////
-
-   public static void fillDefaultMap2(String[][] map) {
-       map[9][1] = "\uD83D\uDEA2";
-       map[9][2] = "\uD83D\uDEA2";
-       map[9][3] = "\uD83D\uDEA2";
-       map[9][4] = "\uD83D\uDEA2";
-
-       map[1][6] = "\uD83D\uDEA2";
-       map[1][7] = "\uD83D\uDEA2";
-       map[1][8] = "\uD83D\uDEA2";
-
-       map[2][1] = "\uD83D\uDEA2";
-       map[2][2] = "\uD83D\uDEA2";
-       map[2][3] = "\uD83D\uDEA2";
-
-       map[7][5] = "\uD83D\uDEA2";
-       map[7][6] = "\uD83D\uDEA2";
-
-       map[4][1] = "\uD83D\uDEA2";
-       map[4][2] = "\uD83D\uDEA2";
-
-       map[4][8] = "\uD83D\uDEA2";
-       map[4][9] = "\uD83D\uDEA2";
-
-       map[5][5] = "\uD83D\uDEA2";
-
-       map[3][5] = "\uD83D\uDEA2";
-
-       map[7][1] = "\uD83D\uDEA2";
-
-       map[8][9] = "\uD83D\uDEA2";
-
-
-
-    }
 
 }
