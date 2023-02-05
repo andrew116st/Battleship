@@ -21,7 +21,7 @@ public class DispositionShips {
             int x = Utils.parseX(coordFirst);
             int y = Utils.parseY(coordFirst);
 
-            player[x][y] = "\uD83D\uDEA2";
+            player[x][y] = "\uD83D\uDEA2";          // symbol ship
         }
 
     }
@@ -55,7 +55,7 @@ public class DispositionShips {
     }
 
     public static void fillDefaultMap1(String[][] map) {
-        map[0][1] = "\uD83D\uDEA2";
+        map[0][1] = "\uD83D\uDEA2";  // symbol ship
         map[0][2] = "\uD83D\uDEA2";
         map[0][3] = "\uD83D\uDEA2";
         map[0][4] = "\uD83D\uDEA2";

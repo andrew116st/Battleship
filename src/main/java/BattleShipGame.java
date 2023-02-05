@@ -32,8 +32,8 @@ public class BattleShipGame {
         Utils.printMap(myShips);
     }
 
-    public boolean checkStrike(int x, int y) { //true - попал, а false - промах
-        if (myShips[x][y].equals("\uD83D\uDEA2")) {
+    public boolean checkStrike(int x, int y) {             //true - попал, а false - промах
+        if (myShips[x][y].equals("\uD83D\uDEA2")) {     // symbol ship
             return true;
         } else {
             return false;
@@ -42,7 +42,7 @@ public class BattleShipGame {
     }
 
     public void markRedEnemyMap(int x, int y) {
-        enemyMap[x][y] = "\uD83D\uDFE5";
+        enemyMap[x][y] = "\uD83D\uDFE5";                // red square
     }
 
     public void markRedMyMap(int x, int y) {
@@ -62,7 +62,7 @@ public class BattleShipGame {
     }
 
     public void writeDownMiss(int x, int y) {
-        if (enemyMap[x][y].equals("\uD83D\uDEA2")) {
+        if (!enemyMap[x][y].equals("\uD83D\uDFE5")) { // symbol red square
             enemyMap[x][y] = "●";
         }
     }

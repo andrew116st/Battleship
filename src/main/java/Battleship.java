@@ -9,6 +9,7 @@ public class Battleship {
     private static final boolean TEST = true;
 
     public static void main(String[] args) throws InterruptedException {
+
         String[][] player1Map = new String[BattleShipGame.SIZE_BOARD][BattleShipGame.SIZE_BOARD];
         String[][] player2Map = new String[BattleShipGame.SIZE_BOARD][BattleShipGame.SIZE_BOARD];
 
@@ -22,6 +23,7 @@ public class Battleship {
         if (TEST){
             DispositionShips.fillDefaultMap1(player1Map);
             DispositionShips.fillDefaultMap2(player2Map);
+
         } else {
             DispositionShips.shipTable(player1Map, 1);
             DispositionShips.shipTable(player2Map, 2);
@@ -40,7 +42,7 @@ public class Battleship {
         System.out.println();
         System.out.println("Введите случайное число - для опредения вероятности: кто будет ходить первым - " + "$$$$_" + "\uD83E\uDD11" + "_$$$$");
         int seed = Integer.parseInt(sc.nextLine());
-        final Random random = new Random(seed);
+        Random random = new Random(seed);
         boolean currentMovePlayer1 = random.nextInt(2) == 1;
 
         while(player1.getCountDamagedShip() < MAX_SHIPS_ARMADA && player2.getCountDamagedShip() < MAX_SHIPS_ARMADA) {
