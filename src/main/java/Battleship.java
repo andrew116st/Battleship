@@ -6,44 +6,36 @@ import java.util.Scanner;
 public class Battleship {
     public static Scanner sc = new Scanner(System.in);
     private static final int MAX_SHIPS_ARMADA = 20;
-
-    private static final boolean TEST = false;
-    private static final int SIZE_BOARD = 10;
+    private static final boolean TEST = true;
 
     public static void main(String[] args) throws InterruptedException {
+        String[][] player1Map = new String[BattleShipGame.SIZE_BOARD][BattleShipGame.SIZE_BOARD];
+        String[][] player2Map = new String[BattleShipGame.SIZE_BOARD][BattleShipGame.SIZE_BOARD];
 
-        String[][] player1 = new String[SIZE_BOARD][SIZE_BOARD];
-        String[][] player2 = new String[SIZE_BOARD][SIZE_BOARD];
-
-        String[][] map1 = new String[SIZE_BOARD][SIZE_BOARD];
-        String[][] map2 = new String[SIZE_BOARD][SIZE_BOARD];
-
-        for (int i = 0; i < player1.length; i++) {
-            for (int j = 0; j < player1.length; j++) {
-                player1[i][j] = "⬜";
-                player2[i][j] = "⬜";
-                map1[i][j] = "⬜";
-                map2[i][j] = "⬜";
+        for (int i = 0; i < player1Map.length; i++) {
+            for (int j = 0; j < player1Map.length; j++) {
+                player1Map[i][j] = "⬜";
+                player2Map[i][j] = "⬜";
             }
         }
+
+        if (TEST){
+            DispositionShips.fillDefaultMap1(player1Map);
+            DispositionShips.fillDefaultMap2(player2Map);
+        } else {
+            DispositionShips.shipTable(player1Map, 1);
+            DispositionShips.shipTable(player2Map, 2);
+        }
+
+        BattleShipGame player1 = new BattleShipGame(player1Map);
+        BattleShipGame player2 = new BattleShipGame(player2Map);
 
         System.out.println("Вы начали играть в игру: " +  "▂ ▃ ▅ ▆ █ Морской бой █ ▆ ▅ ▃ ▂");
         System.out.println();
 
-        if(TEST){
-            DispositionShips.fillDefaultMap1(player1);
-            DispositionShips.fillDefaultMap2(player2);
-         } else {
-            DispositionShips.shipTable(player1, 1);
-            DispositionShips.shipTable(player2, 2);
-        }
-
-        Utils.printMap(player1);
+        player1.showMyMap();
         System.out.println();
-        Utils.printMap(player2);
-
-        int countDamagedShip1 = 0;
-        int countDamagedShip2 = 0;
+        player2.showMyMap();
 
         System.out.println();
         System.out.println("Введите случайное число - для опредения вероятности: кто будет ходить первым - " + "$$$$_" + "\uD83E\uDD11" + "_$$$$");
@@ -51,13 +43,11 @@ public class Battleship {
         final Random random = new Random(seed);
         boolean currentMovePlayer1 = random.nextInt(2) == 1;
 
-        while(countDamagedShip2 < MAX_SHIPS_ARMADA && countDamagedShip1 < MAX_SHIPS_ARMADA) {
+        while(player1.getCountDamagedShip() < MAX_SHIPS_ARMADA && player2.getCountDamagedShip() < MAX_SHIPS_ARMADA) {
             int number = currentMovePlayer1 ? 1 : 2;
             int numberAttack = currentMovePlayer1 ? 2 : 1;
-
-            String[][] mapToCheck = currentMovePlayer1 ? player2 : player1;
-
-            String[][] mapTemp = currentMovePlayer1 ? map2 : map1;
+            BattleShipGame wasAttacked = currentMovePlayer1 ? player2 : player1;
+            BattleShipGame whoAttack = currentMovePlayer1 ? player1 : player2;
 
             int x = 0;
             int y = 0;
@@ -66,10 +56,9 @@ public class Battleship {
             System.out.println("◀ █ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ ▯▮ █ ▶");
             System.out.println("Карта игрока " + numberAttack);
             System.out.println("Loading… ███████████ 100%");
-            Utils.printMap(mapTemp);
-            Utils.printMap(mapToCheck);
 
-
+            whoAttack.showEnemyMap();
+            wasAttacked.showMyMap();
 
             while (true) {
 
@@ -91,39 +80,29 @@ public class Battleship {
                 System.out.println("Введите координат повторно - Вы ошиблись при вводе");
             }
 
-            if (mapToCheck[x][y].equals("\uD83D\uDEA2")) {
+            if (wasAttacked.checkStrike(x, y)) {
                 System.out.println("Вы попали в корабль");
-                mapToCheck[x][y] = "\uD83D\uDFE5";
+                whoAttack.markRedEnemyMap(x, y);
+                wasAttacked.markRedMyMap(x, y);
 
                 System.out.println();
-                mapTemp[x][y] = "\uD83D\uDFE5";
 
-                if (Checks.completeDestructionShip(x, y, x, y, mapToCheck)) {
-                    System.out.println("Утопил");
-                } else {
-                    System.out.println("Ранил");
-                }
-
-                if (currentMovePlayer1) {
-                    countDamagedShip2++;
-
-                } else  {
-                    countDamagedShip1++;
-                }
-
+                wasAttacked.hitOrDestroyed(x, y);
+                wasAttacked.increaseCountDamagedShips();
             } else {
                 currentMovePlayer1 = currentMovePlayer1 ? false : true;
                 System.out.println("Вы промахнулись");
 
-                mapTemp[x][y] = "●";
+                whoAttack.writeDownMiss(x, y);
 
             }
+
             Thread.sleep(2000); // pause between moves
         }
 
-        if (countDamagedShip2 == MAX_SHIPS_ARMADA){
+        if (player2.getCountDamagedShip() == MAX_SHIPS_ARMADA){
             System.out.println("Победил первый игрок");
-        } else if (countDamagedShip1 == MAX_SHIPS_ARMADA){
+        } else if (player1.getCountDamagedShip() == MAX_SHIPS_ARMADA){
             System.out.println("Победил второй игрок");
         }
 
