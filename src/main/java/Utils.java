@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 public class Utils {
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_BLUE = "\u001B[34m";
@@ -54,4 +56,15 @@ public class Utils {
     }
 
 
+    public static void clearScreen() {
+        try {
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 }
